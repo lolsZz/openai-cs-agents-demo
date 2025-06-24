@@ -18,6 +18,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { AlignmentEngineer } from './alignment_engineering.js';
+import { PerformanceEnhancer } from './performance_enhancement.js';
 
 // Intelligent Orchestration System
 class IntelligentOrchestrator {
@@ -25,6 +26,7 @@ class IntelligentOrchestrator {
     console.error('🎯 Amazon Q Intelligent Orchestration Server started!');
     console.error('🚀 Ready to orchestrate complex workflows for Amazon Q');
     this.alignmentEngineer = new AlignmentEngineer();
+    this.performanceEnhancer = new PerformanceEnhancer();
   }
 
   // Intelligent Orchestration Method
@@ -218,6 +220,33 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ['project_path', 'stated_purpose']
         },
+      },
+      {
+        name: 'performance_optimization',
+        description: 'Real-time self-optimization of Amazon Q responses for maximum effectiveness',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            user_input: {
+              type: 'string',
+              description: 'The user input to analyze and optimize response for'
+            },
+            proposed_response: {
+              type: 'string',
+              description: 'The proposed response to optimize'
+            },
+            context: {
+              type: 'object',
+              description: 'Additional context about the interaction'
+            },
+            optimize_for: {
+              type: 'string',
+              enum: ['clarity', 'conciseness', 'technical_accuracy', 'actionability'],
+              description: 'Primary optimization target'
+            }
+          },
+          required: ['user_input', 'proposed_response']
+        },
       }
     ],
   };
@@ -270,6 +299,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 analysis: alignmentAnalysis,
                 autonomous_capability: "Can independently detect and correct misalignment",
                 paradigm: "Stated purpose → Implementation audit → Misalignment detection → Surgical correction"
+              }, null, 2)
+            }
+          ]
+        };
+      }
+
+      case 'performance_optimization': {
+        const { user_input, proposed_response, context = {}, optimize_for = 'clarity' } = args;
+        
+        // Real-time performance optimization
+        const optimization = await orchestrator.performanceEnhancer.optimizeResponse(
+          user_input, 
+          proposed_response, 
+          { ...context, optimize_for }
+        );
+        
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                performance_optimization: true,
+                user_input: user_input,
+                original_response: optimization.original_response,
+                optimized_response: optimization.optimized_response,
+                improvements_made: optimization.improvements_made,
+                confidence_score: optimization.confidence_score,
+                performance_analysis: optimization.performance_analysis,
+                paradigm: "Continuous self-optimization for maximum effectiveness"
               }, null, 2)
             }
           ]
