@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Test script for Amazon Q Agent Orchestra MCP Server
+ * Test script for Amazon Q Intelligent Orchestration MCP Server
  */
 
 import { spawn } from 'child_process';
 import { setTimeout } from 'timers/promises';
 
-console.log('🧪 Testing Amazon Q Agent Orchestra MCP Server...\n');
+console.log('🧪 Testing Amazon Q Intelligent Orchestration MCP Server...\n');
 
 // Test the MCP server by sending it MCP protocol messages
 async function testMCPServer() {
@@ -28,66 +28,57 @@ async function testMCPServer() {
 
   // Send initialization message
   const initMessage = JSON.stringify({
-    jsonrpc: '2.0',
+    jsonrpc: "2.0",
     id: 1,
-    method: 'initialize',
+    method: "initialize",
     params: {
-      protocolVersion: '2024-11-05',
+      protocolVersion: "2024-11-05",
       capabilities: {},
       clientInfo: {
-        name: 'test-client',
-        version: '1.0.0'
+        name: "test-client",
+        version: "1.0.0"
       }
     }
   }) + '\n';
 
-  server.stdin.write(initMessage);
-
-  // Wait a bit for response
-  await setTimeout(1000);
-
-  // Send list tools request
+  // Send list tools message
   const listToolsMessage = JSON.stringify({
-    jsonrpc: '2.0',
+    jsonrpc: "2.0",
     id: 2,
-    method: 'tools/list',
-    params: {}
+    method: "tools/list"
   }) + '\n';
 
+  server.stdin.write(initMessage);
   server.stdin.write(listToolsMessage);
 
-  // Wait for response
-  await setTimeout(1000);
+  // Wait for responses
+  await setTimeout(2000);
 
   server.kill();
 
   console.log('📤 Server Error Output (startup messages):');
   console.log(errorOutput);
-  
   console.log('\n📥 Server Output (MCP responses):');
   console.log(output);
 
-  // Check if we got expected responses
-  if (output.includes('tools') && output.includes('start_customer_service_session')) {
-    console.log('\n✅ MCP Server test PASSED! Server is responding correctly.');
-    return true;
-  } else {
-    console.log('\n❌ MCP Server test FAILED! Server not responding as expected.');
-    return false;
-  }
-}
+  // Check if we got the expected intelligent_orchestration tool
+  const hasIntelligentOrchestration = output.includes('intelligent_orchestration');
+  const hasOldCustomerService = output.includes('start_customer_service_session');
 
-// Run the test
-testMCPServer().then(success => {
-  if (success) {
+  if (hasIntelligentOrchestration && !hasOldCustomerService) {
+    console.log('\n✅ MCP Server test PASSED! Clean intelligent orchestration implementation.');
     console.log('\n🎉 Ready to integrate with Amazon Q CLI!');
     console.log('\n📋 Next steps:');
     console.log('1. Add this MCP server to your Amazon Q CLI configuration');
-    console.log('2. Test the agent orchestration tools');
-    console.log('3. Demo the multi-agent customer service workflow');
+    console.log('2. Test the intelligent orchestration tool');
+    console.log('3. Demo complex workflow orchestration');
+  } else if (hasOldCustomerService) {
+    console.log('\n❌ MCP Server test FAILED! Still contains old customer service tools.');
+    console.log('🔧 Server needs cleanup to remove airline customer service functionality.');
   } else {
-    console.log('\n🔧 Server needs debugging before integration.');
+    console.log('\n❌ MCP Server test FAILED! Server not responding as expected.');
+    console.log('🔧 Server needs debugging before integration.');
   }
-}).catch(error => {
-  console.error('Test failed with error:', error);
-});
+}
+
+testMCPServer().catch(console.error);
