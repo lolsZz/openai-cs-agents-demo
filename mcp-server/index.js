@@ -17,16 +17,16 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { AlignmentEngineer } from './alignment_engineering.js';
-import { PerformanceEnhancer } from './performance_enhancement.js';
+import { RealAlignmentEngineer } from './real_alignment_engineering.js';
+import { RealPerformanceEnhancer } from './real_performance_enhancement.js';
 
 // Intelligent Orchestration System
 class IntelligentOrchestrator {
   constructor() {
     console.error('🎯 Amazon Q Intelligent Orchestration Server started!');
     console.error('🚀 Ready to orchestrate complex workflows for Amazon Q');
-    this.alignmentEngineer = new AlignmentEngineer();
-    this.performanceEnhancer = new PerformanceEnhancer();
+    this.alignmentEngineer = new RealAlignmentEngineer();
+    this.performanceEnhancer = new RealPerformanceEnhancer();
   }
 
   // Intelligent Orchestration Method
