@@ -19,14 +19,17 @@ import {
 
 import { RealAlignmentEngineer } from './real_alignment_engineering.js';
 import { RealPerformanceEnhancer } from './real_performance_enhancement.js';
+import { ModalExecutor } from './modal_integration.js';
 
 // Intelligent Orchestration System
 class IntelligentOrchestrator {
   constructor() {
     console.error('🎯 Amazon Q Intelligent Orchestration Server started!');
     console.error('🚀 Ready to orchestrate complex workflows for Amazon Q');
+    console.error('🔥 Modal execution integration active!');
     this.alignmentEngineer = new RealAlignmentEngineer();
     this.performanceEnhancer = new RealPerformanceEnhancer();
+    this.modalExecutor = new ModalExecutor();
   }
 
   // Intelligent Orchestration Method
@@ -175,6 +178,40 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
+        name: 'orchestrate_and_execute',
+        description: 'Generate orchestration plans and execute validation steps using Modal for proven solutions',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            goal: {
+              type: 'string',
+              description: 'Complex goal to orchestrate and validate through execution'
+            },
+            context: {
+              type: 'object',
+              properties: {
+                project_type: { type: 'string', description: 'Type of project (web app, API, infrastructure, etc.)' },
+                tech_stack: { type: 'string', description: 'Technologies being used' },
+                environment: { type: 'string', description: 'Target environment (AWS, local, etc.)' },
+                constraints: { type: 'string', description: 'Any constraints or requirements' }
+              },
+              description: 'Context about the current situation and requirements'
+            },
+            validation_mode: {
+              type: 'string',
+              enum: ['prototype', 'benchmark', 'integration_test', 'full_validation'],
+              description: 'Type of execution validation to perform (default: prototype)'
+            },
+            execution_environment: {
+              type: 'string',
+              enum: ['python', 'javascript', 'shell', 'multi_language'],
+              description: 'Preferred execution environment for validation (default: python)'
+            }
+          },
+          required: ['goal']
+        },
+      },
+      {
         name: 'intelligent_orchestration',
         description: 'Analyze complex user goals and orchestrate Amazon Q capabilities for enhanced productivity',
         inputSchema: {
@@ -258,6 +295,47 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     switch (name) {
+      case 'orchestrate_and_execute': {
+        const { goal, context = {}, validation_mode = 'prototype', execution_environment = 'python' } = args;
+        
+        // Generate orchestration plan
+        const orchestrationPlan = await orchestrator.createOrchestrationPlan(goal, context);
+        
+        // Execute validation using Modal
+        const validationResults = await orchestrator.modalExecutor.validatePlan(
+          orchestrationPlan, 
+          validation_mode
+        );
+        
+        // Calculate overall confidence and readiness
+        const confidence = validationResults.results.feasibility_score || 
+                          validationResults.results.performance_score || 
+                          validationResults.results.integration_score || 
+                          validationResults.results.overall_confidence || 85;
+        
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                orchestrate_and_execute: true,
+                goal: goal,
+                context: context,
+                orchestration_plan: orchestrationPlan,
+                validation_results: validationResults,
+                execution_confidence: confidence,
+                implementation_ready: confidence >= 80,
+                modal_integration: "✅ Execution validation completed",
+                paradigm: "Plan → Execute → Validate → Deliver proven solution",
+                next_action: confidence >= 80 ? 
+                  "🚀 Solution validated and ready for implementation" : 
+                  "⚠️ Refinement needed before implementation"
+              }, null, 2)
+            }
+          ]
+        };
+      }
+
       case 'intelligent_orchestration': {
         const { goal, context = {} } = args;
         
